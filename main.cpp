@@ -127,11 +127,10 @@ public:
 	//Draw Bezier Curves to the Pixel Buffer
 	void drawBezier() {
 		Vertex temp1, temp2;
-		int edge1, edge2;
 		vector<Vertex> output;
 		
 		//Draw control points
-		for (int i = 0; i < vertices.size() - 1; i++) {
+		for (int i = 0; i < (int)vertices.size() - 1; i++) {
 			temp1 = toNDCtoPixel(vertices[i].x, vertices[i].y, 1);
 			temp2 = toNDCtoPixel(vertices[i + 1].x, vertices[i + 1].y, 1);
 			drawBresenham(temp1.x, temp1.y, temp2.x, temp2.y, 0);
@@ -155,8 +154,8 @@ public:
 		for (double t = 0; t <= 1; t += (1 / (double)resolution)) {
 			vector<Vertex> tempA(vertices);
 			vector<Vertex> tempB(vertices);
-			for (int j = 1; j <= vertices.size(); j++) {
-				for (int i = 0; i < vertices.size() - j; i++) {
+			for (int j = 1; j <= (int)vertices.size(); j++) {
+				for (int i = 0; i < (int)vertices.size() - j; i++) {
 					if (flip) {
 						tempA[i].x = ((1 - t) * tempB[i].x) + (t * tempB[i + 1].x);
 						tempA[i].y = ((1 - t) * tempB[i].y) + (t * tempB[i + 1].y);
@@ -178,14 +177,12 @@ public:
 				output.push_back(tempB[0]);
 			}
 		}
-
 		//Draw out the ouput curve
-		for (int i = 0; i < output.size() - 1; i++) {
+		for (int i = 0; i < (int)output.size() - 1; i++) {
 			temp1 = toNDCtoPixel(output[i].x, output[i].y, 1);
 			temp2 = toNDCtoPixel(output[i + 1].x, output[i + 1].y, 1);
 			drawBresenham(temp1.x, temp1.y, temp2.x, temp2.y, 1);
 		}
-
 	}
 
 	//Draw B-Spline Curves to the Pixel Buffer
@@ -193,7 +190,7 @@ public:
 		Vertex temp1, temp2;
 		vector<Vertex> output;
 		//Draw control points
-		for (int i = 0; i < vertices.size() - 1; i++) {
+		for (int i = 0; i < (int)vertices.size() - 1; i++) {
 			temp1 = toNDCtoPixel(vertices[i].x, vertices[i].y, 1);
 			temp2 = toNDCtoPixel(vertices[i + 1].x, vertices[i + 1].y, 1);
 			drawBresenham(temp1.x, temp1.y, temp2.x, temp2.y, 0);
@@ -215,7 +212,7 @@ public:
 		int I;
 		for (double uBar = knots[order - 1]; uBar <= knots[vertexCount + 1]; uBar += ((knots[vertexCount + 1] - knots[order - 1]) / (double)resolution)) {
 			//Find where the I value is
-			for (int k = 0; k < knots.size(); k++) {
+			for (int k = 0; k < (int)knots.size(); k++) {
 				if (uBar == knots[k] || uBar < knots[k+1]){
 					I = k;
 					break;
@@ -227,7 +224,7 @@ public:
 			for (int j = 1; j <= order - 1; j++) {
 				for (int i = I - (order - 1); i < I - j; i++) {
 					if (flip) {
-						if (!(i + 1 >= tempB.size())) {
+						if (!(i + 1 >= (int)tempB.size())) {
 							tempA[i].x = (((knots[i + order] - uBar) / (knots[i + order] - knots[i + j])) * tempB[i].x) +
 								((uBar - knots[i + j]) / (knots[i + order] - knots[i + j]) * tempB[i + 1].x);
 							tempA[i].y = (((knots[i + order] - uBar) / (knots[i + order] - knots[i + j])) * tempB[i].y) +
@@ -235,7 +232,7 @@ public:
 						}
 					}
 					else {
-						if (!(i + 1 >= tempB.size())) {
+						if (!(i + 1 >= (int)tempB.size())) {
 							tempB[i].x = (((knots[i + order] - uBar) / (knots[i + order] - knots[i + j])) * tempA[i].x) +
 								((uBar - knots[i + j]) / (knots[i + order] - knots[i + j]) * tempA[i + 1].x);
 							tempB[i].y = (((knots[i + order] - uBar) / (knots[i + order] - knots[i + j])) * tempA[i].y) +
@@ -250,16 +247,16 @@ public:
 			}
 			//The last generation's first value is the one we need to save
 			if (flip) {
-				if (!((I - (order - 1)) >= tempB.size()))
+				if (!((I - (order - 1)) >= (int)tempB.size()))
 					output.push_back(tempA[I - (order - 1)]);
 			}
 			else {
-				if(!((I - (order - 1)) >= tempB.size()))
+				if(!((I - (order - 1)) >= (int)tempB.size()))
 					output.push_back(tempB[I - (order - 1)]);
 			}
 		}
 		//Draw out the ouput curve
-		for (int i = 0; i < output.size() - 1; i++) {
+		for (int i = 0; i < (int)output.size() - 1; i++) {
 			temp1 = toNDCtoPixel(output[i].x, output[i].y, 1);
 			temp2 = toNDCtoPixel(output[i + 1].x, output[i + 1].y, 1);
 			drawBresenham(temp1.x, temp1.y, temp2.x, temp2.y, 1);
@@ -428,7 +425,7 @@ void display(){
 void getSettings(){
 	string space;
 	char in;
-	int vertexCount, order, point1, point2, knot;
+	int vertexCount, order, knot;
 	float x, y;
 
 	cout << "Do you have an input file? (y/n): ";
@@ -573,7 +570,7 @@ void getSettings2() {
 		}
 		//Modify order and knots
 		else if (choice == 5) {
-			int order, knot;
+			int order;
 			cout << "  Order(k value): ";
 			cin >> order;
 			curves[currentID - 1].setOrder(order);
